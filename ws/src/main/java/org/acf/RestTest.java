@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 /**
@@ -17,14 +18,14 @@ public class RestTest {
 
 	final static Logger logger = Logger.getLogger(RestTest.class);
 
-	@RequestMapping(method = PUT)
-	public String greeting(@RequestBody String input) {
+	@RequestMapping(method = { PUT, GET })
+	public String greeting(@RequestBody(required = false) String input) {
 		if (logger.isInfoEnabled()) {
 			logger.info("Received request for correlationId " + input);
 		}
 
 		try {
-			Thread.sleep(5000);
+			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -34,7 +35,11 @@ public class RestTest {
 			logger.info("Request processed for correlationId " + input);
 		}
 
-		return result;
+		if (Math.random() > 0.1) {
+			return result;
+		} else {
+			throw new InternalError("Buba!!!");
+		}
 	}
 
 }

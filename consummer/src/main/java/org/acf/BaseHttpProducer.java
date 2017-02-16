@@ -9,6 +9,7 @@ import org.apache.camel.component.http.HttpOperationFailedException;
 import org.codehaus.jackson.JsonProcessingException;
 
 import javax.annotation.Resource;
+import java.net.ConnectException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,6 +41,12 @@ public class BaseHttpProducer {
 				throw new HttpException(exception.getMessage(),
 								exception.getStatusCode(), executionStep, resourceURI);
 			}
+			if (exchange.getException() instanceof ConnectException) {
+				ConnectException exception = (ConnectException) exchange
+								.getException();
+				throw new FourOFourException(exception.getMessage(),
+								executionStep, resourceURI);
+			}
 			throw new HttpException(exchange.getException().getMessage(), null,
 							executionStep, resourceURI);
 		} else {
@@ -47,8 +54,13 @@ public class BaseHttpProducer {
 			int responseCode = out.getHeader(Exchange.HTTP_RESPONSE_CODE,
 							Integer.class);
 			if (responseCode != 200) {
-				throw new HttpException("Invalid response code", responseCode,
-								executionStep, resourceURI);
+				if (responseCode == 404) {
+					throw new FourOFourException("Invalid response code",
+									executionStep, resourceURI);
+				} else {
+					throw new HttpException("Invalid response code", responseCode,
+									executionStep, resourceURI);
+				}
 			}
 		}
 	}

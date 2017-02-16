@@ -3,13 +3,13 @@ package org.acf;
 public class HttpException extends RuntimeException {
 
 	private static final long serialVersionUID = -5886602137536707676L;
-	
+
 	private final String message;
 	private final Integer httpCode;
 	private final String executionStep;
 	private final String resourceUri;
-	
-	public HttpException(String message, Integer httpCode, String executionStep, String resourceUri){
+
+	public HttpException(String message, Integer httpCode, String executionStep, String resourceUri) {
 		super(message);
 		this.message = message;
 		this.httpCode = httpCode;
@@ -24,7 +24,6 @@ public class HttpException extends RuntimeException {
 	public Integer getHttpCode() {
 		return httpCode;
 	}
-
 
 	public String getExecutionStep() {
 		return executionStep;

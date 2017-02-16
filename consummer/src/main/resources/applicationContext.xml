@@ -22,14 +22,28 @@
 
         <onException>
             <exception>org.acf.HttpException</exception>
-            <redeliveryPolicy maximumRedeliveries="2"/>
+            <redeliveryPolicy/>
+            <transform>
+                <simple>${exception.message}\n${exception.stacktrace}\n${body}</simple>
+            </transform>
+            <to uri="activemq:queue:error.queue"/>
+        </onException>
+
+        <onException>
+            <exception>org.acf.FourOFourException</exception>
+            <redeliveryPolicy maximumRedeliveries="5" redeliveryDelay="10000"/>
+            <transform>
+                <simple>${exception.message}\n${exception.stacktrace}\n${body}</simple>
+            </transform>
             <to uri="activemq:queue:error.queue"/>
         </onException>
 
         <route><!--<to uri="stream:out"/>-->
             <from uri="activemq:queue:test.queue?concurrentConsumers=10"/>
             <to uri="baseHttpProducer"/>
-            <to uri="activemq:queue:c3.queue"/>
+            <recipientList>
+                <simple>activemq:queue:c{{consummerId}}.queue</simple>
+            </recipientList>
         </route>
     </camelContext>
 
