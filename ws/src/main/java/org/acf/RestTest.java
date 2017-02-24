@@ -25,7 +25,7 @@ public class RestTest {
 		}
 
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(3600000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
